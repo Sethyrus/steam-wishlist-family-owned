@@ -1,0 +1,23 @@
+{
+  "name": "steam-wishlist-family-owned",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Marca en la wishlist de Steam los juegos que ya tiene alguien de tu Familia de Steam",
+  "scripts": {
+    "postinstall": "wxt prepare",
+    "dev": "wxt",
+    "build": "wxt build",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "e2e:login": "node e2e/login.mjs",
+    "e2e": "playwright test --config e2e/playwright.config.ts",
+    "zip": "wxt zip"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.50.0",
+    "typescript": "^5.7.0",
+    "vitest": "^3.0.0",
+    "wxt": "^0.20.0"
+  }
+}

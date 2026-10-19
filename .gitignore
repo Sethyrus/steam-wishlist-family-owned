@@ -1,0 +1,10 @@
+node_modules/
+.output/
+.wxt/
+.e2e-profile/
+e2e/screenshots/
+test-results/
+playwright-report/
+*.log
+.DS_Store
+e2e/spike-out/
