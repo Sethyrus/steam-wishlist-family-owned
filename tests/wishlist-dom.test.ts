@@ -87,3 +87,53 @@ describe('no se confunde con la UI propia', () => {
   });
 });
 
+describe('elección del título', () => {
+  const discounted = (id: number, name: string) => `
+    <div class="Panel"><div class="x">
+      <a href="https://store.steampowered.com/app/${id}/"><img/></a>
+      <div class="info"><a class="t" href="https://store.steampowered.com/app/${id}/">${name}</a></div>
+      <a class="p" href="https://store.steampowered.com/app/${id}/">-50% 7,19€ 3,59€ y mucho más texto que el nombre</a>
+    </div></div>`;
+
+  it('no confunde el enlace del precio (más largo) con el título en filas con descuento', () => {
+    document.body.innerHTML = discounted(100, 'Alpha');
+    expect(findRows(document)[0]?.title.textContent).toBe('Alpha');
+    applyBadges(document, data);
+    expect(document.querySelector('.info [data-family-owned]')).not.toBeNull();
+    expect(document.querySelector('a.p + [data-family-owned]')).toBeNull();
+  });
+
+  it('prefiere el enlace cuyo texto coincide con el nombre del juego', () => {
+    document.body.innerHTML = `<div class="Panel"><a href="/app/100/">Comprar ahora</a><a href="/app/100/">Alpha</a></div>`;
+    expect(findRows(document, () => 'Alpha')[0]?.title.textContent).toBe('Alpha');
+    expect(findRows(document)[0]?.title.textContent).toBe('Comprar ahora'); // sin nombre: el primero con texto
+  });
+
+  it('coloca el badge siempre en el mismo sitio, con o sin descuento', () => {
+    document.body.innerHTML = discounted(100, 'Alpha') + rowHtml(300, 'Gamma');
+    applyBadges(document, data);
+    const parents = [...document.querySelectorAll('[data-family-owned]')].map((b) => b.previousElementSibling?.className);
+    expect(parents).toEqual(['t', 't']);
+  });
+
+  it('no coloca nada mientras la fila se está pintando (solo imagen, sin título) y lo coloca cuando llega', () => {
+    document.body.innerHTML = '<div class="Panel"><a class="img" href="https://store.steampowered.com/app/100/"><img/></a></div><div class="Panel"><a href="/app/200/">Beta</a></div>';
+    applyBadges(document, data);
+    expect(document.querySelectorAll('[data-family-owned]')).toHaveLength(0);
+    document.querySelector('.Panel')!.insertAdjacentHTML('beforeend', '<div class="info"><a class="t" href="https://store.steampowered.com/app/100/">Alpha</a></div>');
+    applyBadges(document, data);
+    expect(document.querySelector('.t + [data-family-owned]')).not.toBeNull();
+    expect(document.querySelector('.img + [data-family-owned]')).toBeNull();
+  });
+
+  it('recoloca un badge que quedó en mal sitio aunque su contenido no haya cambiado', () => {
+    document.body.innerHTML = discounted(100, 'Alpha');
+    applyBadges(document, data);
+    const badge = document.querySelector('[data-family-owned]')!;
+    document.querySelector('a.p')!.insertAdjacentElement('afterend', badge); // lo movemos junto al precio
+    applyBadges(document, data);
+    expect(document.querySelectorAll('[data-family-owned]')).toHaveLength(1);
+    expect(document.querySelector('a.t + [data-family-owned]')).not.toBeNull();
+  });
+});
+

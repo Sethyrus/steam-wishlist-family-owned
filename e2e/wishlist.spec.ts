@@ -69,6 +69,30 @@ test('los badges coinciden con la biblioteca familiar, también tras scroll', as
   expect(totalBadges, 'ningún badge visto: ¿la wishlist no contiene juegos de la familia?').toBeGreaterThan(0);
 });
 
+test('los badges se colocan siempre junto al título, no junto al precio', async () => {
+  await page.goto('https://store.steampowered.com/wishlist/', { waitUntil: 'networkidle' });
+  await page.waitForSelector('[data-family-owned]', { timeout: 20_000 });
+  const seen = new Set<string>();
+  for (let step = 0; step < 6; step++) {
+    await page.waitForTimeout(800);
+    const found = await page.evaluate(() =>
+      [...document.querySelectorAll<HTMLElement>('[data-family-owned]')].map((b) => {
+        const prev = b.previousElementSibling as HTMLElement | null;
+        const row = b.closest('.Panel') ?? b.parentElement!;
+        return { appid: b.dataset.appid!, prevText: prev?.textContent?.trim() ?? '', prevIsPrice: /€|\$|%/.test(prev?.textContent ?? ''), dy: Math.round(b.getBoundingClientRect().top - row.getBoundingClientRect().top) };
+      }),
+    );
+    for (const f of found) {
+      seen.add(f.appid);
+      expect(f.prevIsPrice, `app ${f.appid}: el badge sigue a "${f.prevText}"`).toBe(false);
+      expect(f.dy, `app ${f.appid}: el badge debe estar en la parte alta de la fila`).toBeLessThan(80);
+    }
+    await page.mouse.move(700, 600);
+    await page.mouse.wheel(0, 3500);
+  }
+  expect(seen.size).toBeGreaterThan(3);
+});
+
 test('el panel de familia cuenta bien, se abre y se puede refrescar', async () => {
   const truth = await groundTruth();
   const wishlist: string[] = await page.evaluate(async () => {

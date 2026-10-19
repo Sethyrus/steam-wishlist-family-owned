@@ -27,7 +27,20 @@ function distinctApps(el: Element): number {
  * Localiza las filas sin depender de clases CSS: la fila es el ancestro más alto
  * de un enlace /app/N cuyo contenido solo referencia a ese appid.
  */
-export function findRows(root: ParentNode): WishlistRow[] {
+const norm = (t: string | null) => (t ?? '').replace(/\s+/g, ' ').trim().toLowerCase();
+
+/**
+ * El título es el enlace cuyo texto es el nombre del juego; si no coincide (™, traducciones…),
+ * el primer enlace con texto en orden de documento. Ojo: NO sirve "el de más texto": en las filas
+ * con descuento el enlace del precio ("-50% 7,19€ 3,59€") es más largo que el nombre.
+ */
+function pickTitle(anchors: HTMLAnchorElement[], name?: string): HTMLAnchorElement | undefined {
+  const withText = anchors.filter((a) => norm(a.textContent) !== '');
+  // Sin ningún enlace con texto la fila aún se está pintando (primero llega la imagen): no hay título todavía.
+  return (name ? withText.find((a) => norm(a.textContent) === norm(name)) : undefined) ?? withText[0];
+}
+
+export function findRows(root: ParentNode, nameOf?: (appid: string) => string | undefined): WishlistRow[] {
   const byApp = new Map<string, HTMLAnchorElement[]>();
   for (const a of root.querySelectorAll<HTMLAnchorElement>('a[href*="/app/"]')) {
     if (a.closest(`${OWN_UI}`)) continue; // nuestros propios enlaces (panel, badges) no son filas de la wishlist
@@ -42,8 +55,8 @@ export function findRows(root: ParentNode): WishlistRow[] {
     while (row.parentElement && row.parentElement !== document.body && distinctApps(row.parentElement) <= 1) {
       row = row.parentElement;
     }
-    const title = anchors.reduce((best, a) => ((a.textContent ?? '').trim().length > (best.textContent ?? '').trim().length ? a : best));
-    rows.push({ appid, row, title });
+    const title = pickTitle(anchors, nameOf?.(appid));
+    if (title) rows.push({ appid, row, title });
   }
   return rows;
 }
@@ -71,7 +84,7 @@ function badgeInfo(data: FamilyData, appid: string) {
 
 /** Idempotente: si ya hay un badge idéntico no toca el DOM. */
 export function applyBadges(root: ParentNode, data: FamilyData): void {
-  for (const { appid, row, title } of findRows(root)) {
+  for (const { appid, row, title } of findRows(root, (id) => data.index[id]?.name)) {
     const want = badgeInfo(data, appid);
     const next = title.nextElementSibling;
     const existing = row.querySelector<HTMLElement>(`[${BADGE_ATTR}]`) ?? (next?.hasAttribute(BADGE_ATTR) ? (next as HTMLElement) : null);
@@ -79,7 +92,8 @@ export function applyBadges(root: ParentNode, data: FamilyData): void {
       existing?.remove();
       continue;
     }
-    if (existing && existing.dataset.sig === want.sig) continue;
+    // Idéntico Y bien colocado (justo tras el título actual); si React repintó la fila, se recoloca.
+    if (existing && existing.dataset.sig === want.sig && existing.previousElementSibling === title) continue;
     existing?.remove();
     const doc = row.ownerDocument;
     ensureStyle(doc);
