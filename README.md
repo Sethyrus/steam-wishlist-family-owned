@@ -76,7 +76,7 @@ Más detalle en [docs/SPEC.md](docs/SPEC.md), [docs/steam-api.md](docs/steam-api
 - El token de acceso de Steam **nunca se guarda**. Solo se cachea (`storage.local`) la biblioteca familiar: appids, nombres y avatares públicos de tu familia.
 - No pide `host_permissions`, solo `storage`.
 
-Detalles y cómo informar de una vulnerabilidad en [SECURITY.md](SECURITY.md).
+Política completa en [PRIVACY.md](PRIVACY.md). Detalles técnicos y cómo informar de una vulnerabilidad en [SECURITY.md](SECURITY.md).
 
 ## Limitaciones
 

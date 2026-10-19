@@ -21,7 +21,7 @@ Fuentes: `store/icon.svg` (icono) y `store/promo.html` (carteles). Si cambias el
 - Salen juegos de tu wishlist real (carátulas de terceros). Revisa las imágenes antes de subirlas.
 
 ## Pendiente para publicar
-- Política de privacidad en una URL pública (la tienda la exige; la base está en `SECURITY.md`).
+- Política de privacidad: escrita en [PRIVACY.md](../PRIVACY.md) (es/en). URL para la ficha, una vez subida a `main`: https://github.com/Sethyrus/steam-wishlist-family-owned/blob/main/PRIVACY.md. Si cambia el comportamiento de la extensión (otros dominios, otros datos guardados), hay que actualizarla y cambiar la fecha.
 - Formulario de prácticas de datos y justificación de permisos (`storage` y el content script en la wishlist).
 - Textos de la ficha. Hoy la interfaz está solo en español; para público global habría que internacionalizar (`_locales`).
 - Cuenta de desarrollador y declaración de trader/no-trader (UE).

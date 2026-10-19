@@ -8,6 +8,8 @@
 - No pide permisos de sitios adicionales (`host_permissions`); solo `storage`.
 - Todo texto que llega de Steam se inserta con `textContent` (nunca `innerHTML`) y solo se aceptan avatares `https://`.
 
+La política de privacidad completa está en [PRIVACY.md](PRIVACY.md).
+
 ## Cómo verificarlo tú mismo
 Compila desde el código fuente (ver [README](README.md)) y revisa `.output/chrome-mv3/manifest.json`. Cada release publica además un `SHA256SUMS` del zip.
 
