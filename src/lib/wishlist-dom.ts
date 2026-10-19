@@ -36,7 +36,9 @@ export function findRows(root: ParentNode): WishlistRow[] {
   }
   const rows: WishlistRow[] = [];
   for (const [appid, anchors] of byApp) {
-    let row: HTMLElement = anchors[0];
+    const first = anchors[0];
+    if (!first) continue;
+    let row: HTMLElement = first;
     while (row.parentElement && row.parentElement !== document.body && distinctApps(row.parentElement) <= 1) {
       row = row.parentElement;
     }

@@ -11,7 +11,7 @@ function mockFetch(routes: Record<string, () => Response>): typeof fetch {
     const url = String(input);
     const key = Object.keys(routes).find((k) => url.includes(k));
     if (!key) throw new Error(`ruta no mockeada: ${url}`);
-    return routes[key]();
+    return routes[key]!();
   }) as typeof fetch;
 }
 
@@ -26,8 +26,8 @@ const base = {
 describe('fetchFamilyData', () => {
   it('devuelve el índice con nombres de los dueños', async () => {
     const data = await fetchFamilyData(mockFetch(base));
-    expect(data?.index['7'].owners).toEqual([OTHER]);
-    expect(data?.members[OTHER].name).toBe('Ana');
+    expect(data?.index['7']?.owners).toEqual([OTHER]);
+    expect(data?.members[OTHER]?.name).toBe('Ana');
   });
 
   it('devuelve null sin sesión', async () => {
@@ -44,7 +44,7 @@ describe('fetchFamilyData', () => {
 
   it('usa un nombre de reserva si el miniprofile falla', async () => {
     const data = await fetchFamilyData(mockFetch({ ...base, miniprofile: () => json({}, 500) }));
-    expect(data?.members[OTHER].name).toBe(`…${OTHER.slice(-4)}`);
+    expect(data?.members[OTHER]?.name).toBe(`…${OTHER.slice(-4)}`);
   });
 
   it('propaga errores de la API de biblioteca', async () => {

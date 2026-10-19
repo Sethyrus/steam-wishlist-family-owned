@@ -39,7 +39,7 @@ async function groundTruth(): Promise<Set<string>> {
 
 const visible = (p: Page) =>
   p.evaluate(() => {
-    const rows = new Set([...document.querySelectorAll('a[href*="/app/"]')].filter((a) => !a.closest('#family-owned-widget')).map((a) => a.getAttribute('href')!.match(/\/app\/(\d+)/)![1]));
+    const rows = new Set([...document.querySelectorAll('a[href*="/app/"]')].filter((a) => !a.closest('#family-owned-widget')).map((a) => a.getAttribute('href')!.match(/\/app\/(\d+)/)![1]!));
     const badges = [...document.querySelectorAll('[data-family-owned]')].map((b) => (b as HTMLElement).dataset.appid!);
     return { rows: [...rows], badges };
   });

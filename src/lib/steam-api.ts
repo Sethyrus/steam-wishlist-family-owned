@@ -8,7 +8,9 @@ const API = 'https://api.steampowered.com/IFamilyGroupsService';
 /** El webapi_token es un JWT; su campo `sub` es el steamid64 del usuario. */
 export function steamIdFromToken(token: string): string | null {
   try {
-    const payload = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
+    const part = token.split('.')[1];
+    if (!part) return null;
+    const payload = part.replace(/-/g, '+').replace(/_/g, '/');
     const sub = JSON.parse(atob(payload)).sub;
     return /^\d{17}$/.test(String(sub)) ? String(sub) : null;
   } catch {

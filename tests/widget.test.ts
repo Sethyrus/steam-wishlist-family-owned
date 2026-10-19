@@ -73,8 +73,8 @@ describe('avatares en los badges', () => {
     document.body.innerHTML = `<div class="Panel"><a href="/app/100/">Alpha</a></div><div class="Panel"><a href="/app/300/">Gamma</a></div>`;
     applyBadges(document, data());
     const badges = document.querySelectorAll('[data-family-owned]');
-    expect(badges[0].querySelector('img')!.src).toBe('https://cdn/a.jpg');
-    expect(badges[1].querySelector('img')).toBeNull();
+    expect(badges[0]?.querySelector('img')?.src).toBe('https://cdn/a.jpg');
+    expect(badges[1]?.querySelector('img')).toBeNull();
   });
 });
 
@@ -98,8 +98,8 @@ describe('isOwnWishlist', () => {
   it('reconoce /wishlist/profiles/<mi id>', async () => expect(await isOwnWishlist('/wishlist/profiles/1/', '1')).toBe(true));
   it('rechaza el perfil de otro', async () => expect(await isOwnWishlist('/wishlist/profiles/2/', '1')).toBe(false));
   it('reconoce mi vanity, sin importar mayúsculas', async () =>
-    expect(await isOwnWishlist('/wishlist/id/Sethyrus/', '1', vanityFetch('sethyrus'))).toBe(true));
-  it('rechaza la vanity de otro', async () => expect(await isOwnWishlist('/wishlist/id/otro/', '1', vanityFetch('sethyrus'))).toBe(false));
+    expect(await isOwnWishlist('/wishlist/id/MiUsuario/', '1', vanityFetch('miusuario'))).toBe(true));
+  it('rechaza la vanity de otro', async () => expect(await isOwnWishlist('/wishlist/id/otro/', '1', vanityFetch('miusuario'))).toBe(false));
   it('rechaza si falla la consulta o no tengo vanity', async () => {
     expect(await isOwnWishlist('/wishlist/id/x/', '1', vanityFetch(null, 500))).toBe(false);
     expect(await isOwnWishlist('/wishlist/id/x/', '1', vanityFetch('76561197960265729'))).toBe(false);

@@ -26,8 +26,8 @@ describe('findRows', () => {
   it('encuentra una fila por juego y usa el título como ancla', () => {
     const rows = findRows(document);
     expect(rows.map((r) => r.appid)).toEqual(['100', '200', '300']);
-    expect(rows[0].title.textContent).toBe('Alpha');
-    expect(rows[0].row.classList.contains('Panel')).toBe(true);
+    expect(rows[0]?.title.textContent).toBe('Alpha');
+    expect(rows[0]?.row.classList.contains('Panel')).toBe(true);
   });
 });
 
@@ -36,8 +36,8 @@ describe('applyBadges', () => {
     applyBadges(document, data);
     const badges = document.querySelectorAll('[data-family-owned]');
     expect(badges).toHaveLength(2);
-    expect(badges[0].textContent).toContain('Ana, Luis');
-    expect(badges[1].textContent).toContain('no prestable');
+    expect(badges[0]?.textContent).toContain('Ana, Luis');
+    expect(badges[1]?.textContent).toContain('no prestable');
   });
 
   it('es idempotente: la segunda pasada no modifica el DOM', () => {

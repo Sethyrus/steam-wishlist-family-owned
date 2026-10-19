@@ -76,6 +76,7 @@ export function mountWidget(doc: Document, deps: WidgetDeps): void {
     }
     for (const id of list) {
       const entry = data.index[id];
+      if (!entry) continue;
       const a = doc.createElement('a');
       a.className = 'fo-item';
       a.href = `https://store.steampowered.com/app/${id}/`;

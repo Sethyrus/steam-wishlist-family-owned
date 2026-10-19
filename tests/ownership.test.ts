@@ -13,13 +13,13 @@ describe('buildOwnershipIndex', () => {
       ME,
     );
     expect(idx['10']).toBeUndefined();
-    expect(idx['20'].owners).toEqual(['2']);
-    expect(idx['30'].owners).toEqual(['2', '3']);
-    expect(idx['30'].name).toBe('Treinta');
+    expect(idx['20']?.owners).toEqual(['2']);
+    expect(idx['30']?.owners).toEqual(['2', '3']);
+    expect(idx['30']?.name).toBe('Treinta');
   });
 
   it('marca como excluidos los juegos con exclude_reason', () => {
     const idx = buildOwnershipIndex([{ appid: 40, owner_steamids: ['2'], exclude_reason: 3 }], ME);
-    expect(idx['40'].excluded).toBe(true);
+    expect(idx['40']?.excluded).toBe(true);
   });
 });

@@ -8,3 +8,8 @@ playwright-report/
 *.log
 .DS_Store
 e2e/spike-out/
+
+.env
+.env.*
+.claude/settings.local.json
+*.zip
