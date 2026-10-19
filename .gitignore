@@ -13,3 +13,4 @@ e2e/spike-out/
 .env.*
 .claude/settings.local.json
 *.zip
+store/screenshots/

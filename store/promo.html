@@ -1,0 +1,24 @@
+<!doctype html>
+<meta charset="utf-8">
+<style>
+  :root { --w: 440px; --h: 280px; }
+  html, body { margin: 0; width: var(--w); height: var(--h); overflow: hidden; }
+  body { display: flex; align-items: center; justify-content: center; gap: calc(var(--h) * .08);
+    background: radial-gradient(120% 140% at 15% 0%, #2a475e 0%, #16202d 60%, #0f1722 100%);
+    font-family: "Helvetica Neue", Arial, sans-serif; color: #fff; }
+  img { width: calc(var(--h) * .42); height: calc(var(--h) * .42); filter: drop-shadow(0 6px 14px #0008); }
+  .t { display: flex; flex-direction: column; gap: calc(var(--h) * .035); }
+  h1 { margin: 0; font-size: calc(var(--h) * .15); line-height: 1.02; letter-spacing: -.5px; }
+  h1 span { color: #66c0f4; }
+  p { margin: 0; font-size: calc(var(--h) * .068); color: #c6d4df; max-width: calc(var(--w) * .46); line-height: 1.25; }
+  .pill { align-self: flex-start; padding: calc(var(--h) * .018) calc(var(--h) * .04); border-radius: 4px; background: #1b6fa8;
+    font-size: calc(var(--h) * .06); }
+</style>
+<body>
+  <img src="icon.svg" alt="">
+  <div class="t">
+    <h1>Family<br><span>Owned</span></h1>
+    <p>Tu wishlist de Steam, con lo que ya tiene tu familia</p>
+    <div class="pill">👪 Ana, Luis</div>
+  </div>
+</body>

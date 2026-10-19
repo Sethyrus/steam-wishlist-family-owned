@@ -12,7 +12,9 @@
     "test": "vitest run",
     "e2e:login": "node e2e/login.mjs",
     "e2e": "playwright test --config e2e/playwright.config.ts",
-    "zip": "wxt zip"
+    "zip": "wxt zip",
+    "store:assets": "node store/build-assets.mjs",
+    "store:screenshots": "node store/screenshots.mjs"
   },
   "devDependencies": {
     "@playwright/test": "^1.50.0",
