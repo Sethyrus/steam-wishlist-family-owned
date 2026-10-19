@@ -15,4 +15,8 @@ Extensión MV3 (WXT + TypeScript) para Chrome/Chromium, de uso personal. En `sto
 - La inyección de badges debe ser idempotente y sobrevivir a re-renders (MutationObserver).
 - No commitear datos personales: los fixtures se anonimizan (steamids, nombres).
 - Nunca guardar ni loguear el `access_token`.
+- `findRows` debe ignorar nuestra propia UI (`#family-owned-widget`, badges): si no, los badges se multiplican sin límite (hubo un bug así; hay un test de regresión).
+- Todo texto/URL que venga de Steam (nombres, avatares) se inserta con `textContent`/`src` validado, nunca con `innerHTML`.
+- No ocultar filas de la wishlist con CSS (lista virtualizada).
+- No añadir `host_permissions`: el content script ya hace fetch con el CORS de la página.
 - Referencia: `docs/SPEC.md`, `docs/steam-api.md`, `docs/PLAN.md`, `docs/adr/`.

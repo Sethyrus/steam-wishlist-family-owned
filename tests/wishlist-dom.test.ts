@@ -11,10 +11,11 @@ const rowHtml = (id: number, name: string) => `
   </div></div></div>`;
 
 const data: FamilyData = {
+  version: 2,
   fetchedAt: 0,
   self: '1',
   members: { '2': { name: 'Ana', avatar: '' }, '3': { name: 'Luis', avatar: '' } },
-  index: { '100': { owners: ['2', '3'], excluded: false }, '300': { owners: ['2'], excluded: true } },
+  index: { '100': { name: 'Alpha', owners: ['2', '3'], excluded: false }, '300': { name: 'Gamma', owners: ['2'], excluded: true } },
 };
 
 beforeEach(() => {
@@ -68,3 +69,21 @@ describe('applyBadges', () => {
     expect(row.querySelector('[data-family-owned]')!.getAttribute('data-appid')).toBe('300');
   });
 });
+
+describe('no se confunde con la UI propia', () => {
+  it('ignora los enlaces /app/N del panel flotante y no genera badges dentro', () => {
+    document.body.innerHTML += `<div id="family-owned-widget"><a class="fo-item" href="https://store.steampowered.com/app/100/"><span>Alpha</span><span>Ana, Luis, Marta</span></a><a class="fo-item" href="https://store.steampowered.com/app/300/"><span>Gamma</span><span>Ana, Luis, Marta</span></a></div>`;
+    applyBadges(document, data);
+    expect(document.querySelectorAll('#family-owned-widget [data-family-owned]')).toHaveLength(0);
+    expect(findRows(document).map((r) => r.appid)).toEqual(['100', '200', '300']);
+  });
+
+  it('no crece sin límite aunque la fila sea el propio enlace', () => {
+    document.body.innerHTML = '<div><a href="https://store.steampowered.com/app/100/">Alpha</a><a href="https://store.steampowered.com/app/200/">Beta</a></div>';
+    applyBadges(document, data);
+    applyBadges(document, data);
+    applyBadges(document, data);
+    expect(document.querySelectorAll('[data-family-owned]')).toHaveLength(1);
+  });
+});
+

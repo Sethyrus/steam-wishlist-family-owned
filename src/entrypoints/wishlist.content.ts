@@ -1,5 +1,7 @@
 import { loadCache, saveCache } from '@/lib/cache';
-import { fetchFamilyData } from '@/lib/steam-api';
+import { isOwnWishlist } from '@/lib/own-wishlist';
+import { fetchFamilyData, fetchOwnWishlist } from '@/lib/steam-api';
+import { mountWidget } from '@/lib/widget';
 import { applyBadges } from '@/lib/wishlist-dom';
 
 export default defineContentScript({
@@ -27,5 +29,19 @@ export default defineContentScript({
       });
     }).observe(document.body, { childList: true, subtree: true });
     run();
+
+    if (await isOwnWishlist(location.pathname, data.self)) {
+      mountWidget(document, {
+        getData: () => data!,
+        loadWishlist: async () => (await fetchOwnWishlist()) ?? [],
+        refresh: async () => {
+          const fresh = await fetchFamilyData();
+          if (!fresh) throw new Error('sin sesión o grupo');
+          await saveCache(fresh);
+          data = fresh;
+          run();
+        },
+      });
+    }
   },
 });

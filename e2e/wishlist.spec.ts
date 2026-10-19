@@ -39,7 +39,7 @@ async function groundTruth(): Promise<Set<string>> {
 
 const visible = (p: Page) =>
   p.evaluate(() => {
-    const rows = new Set([...document.querySelectorAll('a[href*="/app/"]')].map((a) => a.getAttribute('href')!.match(/\/app\/(\d+)/)![1]));
+    const rows = new Set([...document.querySelectorAll('a[href*="/app/"]')].filter((a) => !a.closest('#family-owned-widget')).map((a) => a.getAttribute('href')!.match(/\/app\/(\d+)/)![1]));
     const badges = [...document.querySelectorAll('[data-family-owned]')].map((b) => (b as HTMLElement).dataset.appid!);
     return { rows: [...rows], badges };
   });
@@ -67,4 +67,33 @@ test('los badges coinciden con la biblioteca familiar, también tras scroll', as
     await page.mouse.wheel(0, 3500);
   }
   expect(totalBadges, 'ningún badge visto: ¿la wishlist no contiene juegos de la familia?').toBeGreaterThan(0);
+});
+
+test('el panel de familia cuenta bien, se abre y se puede refrescar', async () => {
+  const truth = await groundTruth();
+  const wishlist: string[] = await page.evaluate(async () => {
+    const t = (await (await fetch('/pointssummary/ajaxgetasyncconfig')).json()).data.webapi_token;
+    const me = JSON.parse(atob(t.split('.')[1].replace(/-/g, '+').replace(/_/g, '/'))).sub;
+    const r = await (await fetch(`https://api.steampowered.com/IWishlistService/GetWishlist/v1/?access_token=${t}&steamid=${me}`)).json();
+    return r.response.items.map((i: any) => String(i.appid));
+  });
+  const expected = wishlist.filter((id) => truth.has(id)).length;
+
+  await page.goto('https://store.steampowered.com/wishlist/', { waitUntil: 'networkidle' });
+  const toggle = page.locator('#family-owned-widget button').first();
+  await expect(toggle).toHaveText(`👪 Familia (${expected})`, { timeout: 20_000 });
+
+  await toggle.click();
+  const items = page.locator('#family-owned-widget .fo-item');
+  await expect(items).toHaveCount(expected);
+  await expect(page.locator('#family-owned-widget [data-family-owned]')).toHaveCount(0);
+  const badgeCount = await page.locator('[data-family-owned]').count();
+  await page.waitForTimeout(1500);
+  expect(await page.locator('[data-family-owned]').count(), 'los badges no deben crecer solos').toBe(badgeCount);
+  await page.screenshot({ path: path.join(SHOTS, 'panel.png') });
+
+  await page.locator('#family-owned-widget .fo-ghost').click();
+  await expect(page.locator('#family-owned-widget .fo-ghost')).toHaveText('↻', { timeout: 30_000 });
+  await expect(page.locator('#family-owned-widget .fo-head')).not.toContainText('No se pudo');
+  await expect(items).toHaveCount(expected);
 });

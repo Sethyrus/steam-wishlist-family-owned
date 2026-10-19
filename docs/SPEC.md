@@ -17,6 +17,9 @@ La wishlist de Steam no indica qué juegos ya tiene alguien de tu Familia de Ste
 
 7. Genérica: nada hardcodeado a una cuenta; usa la sesión de Steam de quien la instala. Quien no pertenezca a un grupo familiar no ve nada (sin errores).
 8. `npm run zip` genera un zip sin datos personales y el README explica la instalación.
+9. Panel flotante "👪 Familia (N)" solo en la wishlist propia: lista wishlist ∩ familia con avatares, y botón ↻ de refresco manual.
+10. Los badges muestran avatares; solo se aceptan avatares `https://` y los textos de Steam nunca se insertan como HTML.
+11. La extensión no pide `host_permissions`.
 
 ## Fuera de alcance
 Amigos, Firefox, publicación en tiendas, app de escritorio de Steam.

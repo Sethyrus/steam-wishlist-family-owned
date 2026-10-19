@@ -1,5 +1,5 @@
 import { buildOwnershipIndex } from './ownership';
-import type { FamilyData, MemberProfile, SharedApp } from './types';
+import { DATA_VERSION, type FamilyData, type MemberProfile, type SharedApp } from './types';
 
 type Fetch = typeof fetch;
 
@@ -71,5 +71,15 @@ export async function fetchFamilyData(f: Fetch = fetch): Promise<FamilyData | nu
   const needed = [...new Set(Object.values(index).flatMap((e) => e.owners))];
   const members: FamilyData['members'] = {};
   await Promise.all(needed.map(async (id) => (members[id] = await fetchProfile(id, f))));
-  return { fetchedAt: Date.now(), self: auth.self, members, index };
+  return { version: DATA_VERSION, fetchedAt: Date.now(), self: auth.self, members, index };
+}
+
+/** appids de la wishlist del usuario logueado. null si no hay sesión. */
+export async function fetchOwnWishlist(f: Fetch = fetch): Promise<string[] | null> {
+  const auth = await fetchToken(f);
+  if (!auth) return null;
+  const res = await f(`https://api.steampowered.com/IWishlistService/GetWishlist/v1/?access_token=${auth.token}&steamid=${auth.self}`);
+  if (!res.ok) throw new Error(`GetWishlist ${res.status}`);
+  const items: { appid: number }[] = (await res.json())?.response?.items ?? [];
+  return items.map((i) => String(i.appid));
 }

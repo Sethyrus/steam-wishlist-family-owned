@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { accountId, fetchFamilyData, steamIdFromToken } from '../src/lib/steam-api';
+import { accountId, fetchFamilyData, fetchOwnWishlist, steamIdFromToken } from '../src/lib/steam-api';
 
 const json = (body: unknown, status = 200) => new Response(JSON.stringify(body), { status });
 const ME = '76561197960265729'; // accountid 1
@@ -57,6 +57,17 @@ describe('steamIdFromToken', () => {
   it('devuelve null con un token mal formado', () => {
     expect(steamIdFromToken('basura')).toBeNull();
     expect(steamIdFromToken(jwt('abc'))).toBeNull();
+  });
+});
+
+describe('fetchOwnWishlist', () => {
+  it('devuelve los appids de la wishlist', async () => {
+    const f = mockFetch({ ...base, GetWishlist: () => json({ response: { items: [{ appid: 5 }, { appid: 6 }] } }) });
+    expect(await fetchOwnWishlist(f)).toEqual(['5', '6']);
+  });
+  it('devuelve null sin sesión y lanza ante un 429', async () => {
+    expect(await fetchOwnWishlist(mockFetch({ ...base, ajaxgetasyncconfig: () => json({ data: {} }) }))).toBeNull();
+    await expect(fetchOwnWishlist(mockFetch({ ...base, GetWishlist: () => json({}, 429) }))).rejects.toThrow('429');
   });
 });
 

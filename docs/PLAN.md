@@ -7,5 +7,5 @@
 - [x] T4 `wishlist-dom.ts` (filas, badges idempotentes) + tests con HTML fixture
 - [x] T5 Content script: orquestación, caché 6 h
 - [x] T6 E2E headless con capturas
-- [ ] T7 Pulido: filtro, `exclude_reason`, popup
-- [ ] T8 Distribución: `npm run zip` + README de instalación (hecho el script y el README; falta probarlo con el MVP)
+- [x] T7 Pulido: panel wishlist ∩ familia (en vez de filtro CSS: la lista está virtualizada), refresco, avatares, `exclude_reason`
+- [x] T8 Distribución: `npm run zip` + README; zip probado en un perfil limpio sin sesión (carga, no rompe la página, no muestra nada). Pendiente: probarlo con un amigo real que esté en un grupo familiar

@@ -13,6 +13,11 @@ Fuentes: SteamTracking (protobufs), steamapi.xpaw.me, código de Lutris y Augmen
 - La wishlist lanza el error de React #418 (hidratación) con y sin la extensión: no es nuestro.
 - Un content script de la extensión puede llamar a `api.steampowered.com` sin problemas de CORS (verificado en E2E).
 
+- `IWishlistService/GetWishlist/v1/?access_token=…&steamid=…` → `items[] {appid, priority, date_added}` (verificado: 135 items).
+- `steamcommunity.com/actions/ajaxresolveusers?steamids=<id>` → `[{profile_url: "<vanity>", …}]` (sirve para saber si /wishlist/id/<vanity> es la propia). Funciona desde la tienda (CORS ok).
+- `/wishlist/` a secas redirige a `/wishlist/id/<vanity>/` DESPUÉS de que arranca el content script; por eso se trata como propia.
+- La lista es un contenedor de altura fija (N × 174 px) con un bloque absoluto que contiene solo ~14 filas: ocultar filas con CSS rompe la virtualización (hueco enorme). Por eso el "filtro" es un panel aparte.
+
 ## Verificado en vivo (Fase 0, 2026-10-19)
 - Token OK desde la página de la tienda; `GetFamilyGroupForUser` y `GetSharedLibraryApps` devuelven 200. CORS no es problema (fetch desde la propia página de la tienda).
 - `GetSharedLibraryApps` devolvió 3470 apps en una sola llamada. Cada app trae `appid`, `owner_steamids[]`, `name`, `exclude_reason`, `app_type`.
